@@ -16,7 +16,11 @@
 //    when the element is clicked to select the current draggable element. (Sorry about my bad English!)
 // 3. Move the `draggable` and `active-handle` class as a part of the plugin option
 // Next update?? NEVER!!! Should create a similar plugin that is not called `simple`!
-
+//
+// v 0.2 - @pjfsilva - Added cancel elements option. This fixes the problem where <select> elements inside the draggable
+// element stop working and also improves UX as no drag event is triggered when the user is on top of a cancel element.
+// This solution is based on jquery-ui cancel solution. 
+//
 (function($) {
     $.fn.drags = function(opt) {
 
@@ -24,13 +28,16 @@
             handle: "",
             cursor: "move",
             draggableClass: "draggable",
-            activeHandleClass: "active-handle"
+            activeHandleClass: "active-handle",
+            cancel: 'a,input,textarea,button,select,option'
         }, opt);
 
         var $selected = null;
         var $elements = (opt.handle === "") ? this : this.find(opt.handle);
 
         $elements.css('cursor', opt.cursor).on("mousedown", function(e) {
+            var elIsCancel = e.target.nodeName ? $(e.target).closest(opt.cancel).length : false;
+
             if(opt.handle === "") {
                 $selected = $(this);
                 $selected.addClass(opt.draggableClass);
@@ -38,6 +45,12 @@
                 $selected = $(this).parent();
                 $selected.addClass(opt.draggableClass).find(opt.handle).addClass(opt.activeHandleClass);
             }
+
+            if (elIsCancel){
+                // cancel drag if user started on a cancel element
+                return true;
+            }
+
             var drg_h = $selected.outerHeight(),
                 drg_w = $selected.outerWidth(),
                 pos_y = $selected.offset().top + drg_h - e.pageY,
