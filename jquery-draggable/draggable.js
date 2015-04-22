@@ -8,6 +8,7 @@
 // cursor            => define your draggable element cursor type
 // draggableClass    => define the draggable class
 // activeHandleClass => define the active handle class
+// cancel            => elements to ignore starting the drag operation
 //
 // Update: 26 February 2013
 // 1. Move the `z-index` manipulation from the plugin to CSS declaration
